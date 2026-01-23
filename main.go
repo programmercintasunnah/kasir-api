@@ -36,7 +36,6 @@ func main() {
 	})
 
 	fmt.Println("Server running di localhost:8081")
-
 	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
 		fmt.Println("gagal running server")

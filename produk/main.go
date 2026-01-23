@@ -21,8 +21,6 @@ var DataProduk = []Produk{
 }
 
 func AmbilProdukByID(w http.ResponseWriter, r *http.Request) {
-	// Parse ID dari URL path
-	// URL: /api/produk/123 -> ID = 123
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -30,7 +28,6 @@ func AmbilProdukByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Cari produk dengan ID tersebut
 	for _, p := range DataProduk {
 		if p.ID == id {
 			w.Header().Set("Content-Type", "application/json")
@@ -39,22 +36,18 @@ func AmbilProdukByID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Kalau tidak found
 	http.Error(w, "Produk belum ada", http.StatusNotFound)
 }
 
 func UbahProdukByID(w http.ResponseWriter, r *http.Request) {
-	// get id dari request
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 
-	// ganti int
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid Produk ID", http.StatusBadRequest)
 		return
 	}
 
-	// get data dari request
 	var updateProduk Produk
 	err = json.NewDecoder(r.Body).Decode(&updateProduk)
 	if err != nil {
@@ -62,7 +55,6 @@ func UbahProdukByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// loop produk, cari id, ganti sesuai data dari request
 	for i := range DataProduk {
 		if DataProduk[i].ID == id {
 			updateProduk.ID = id
@@ -78,20 +70,16 @@ func UbahProdukByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func HapusProdukID(w http.ResponseWriter, r *http.Request) {
-	// get id
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 
-	// ganti id int
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid Produk ID", http.StatusBadRequest)
 		return
 	}
 
-	// loop produk cari ID, dapet index yang mau dihapus
 	for i, p := range DataProduk {
 		if p.ID == id {
-			// bikin slice baru dengan data sebelum dan sesudah index
 			DataProduk = append(DataProduk[:i], DataProduk[i+1:]...)
 
 			w.Header().Set("Content-Type", "application/json")
@@ -106,7 +94,6 @@ func HapusProdukID(w http.ResponseWriter, r *http.Request) {
 }
 
 func TambahProdukBaru(w http.ResponseWriter, r *http.Request) {
-	// baca data dari request
 	var produkBaru Produk
 	err := json.NewDecoder(r.Body).Decode(&produkBaru)
 	if err != nil {
@@ -114,11 +101,10 @@ func TambahProdukBaru(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// masukkin data ke dalam variable produk
 	produkBaru.ID = len(DataProduk) + 1
 	DataProduk = append(DataProduk, produkBaru)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated) // 201
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(produkBaru)
 }
