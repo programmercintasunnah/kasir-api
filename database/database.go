@@ -14,19 +14,18 @@ func InitDB(connectionString string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	// 🔑 WAJIB untuk Supabase pooler (6543)
+	// WAJIB untuk Supabase pooler
 	cfg.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
-	db := stdlib.OpenDB(*cfg)
+	db := stdlib.OpenDB(*cfg) // ← ini *sql.DB
 
-	// Test connection
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(10) // Supabase recommended kecil
+	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(5)
 
-	log.Println("Database connected successfully (pgx)")
+	log.Println("Database connected successfully")
 	return db, nil
 }

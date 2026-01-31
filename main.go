@@ -35,6 +35,10 @@ func main() {
 		DBConn: viper.GetString("DB_CONN"),
 	}
 
+	if config.Port == "" {
+		config.Port = "8080"
+	}
+
 	// Setup database
 	db, err := database.InitDB(config.DBConn)
 	if err != nil {
@@ -65,12 +69,10 @@ func main() {
 	http.HandleFunc("/api/category", categoryHandler.HandleCategory)
 	http.HandleFunc("/api/category/", categoryHandler.HandleCategoryByID)
 
-	if config.Port == "" {
-		config.Port = "8080"
-	}
-
 	addr := "0.0.0.0:" + config.Port
-	fmt.Println("Server running di", addr)
+	log.Println("Server running on", addr)
+
+	log.Fatal(http.ListenAndServe(addr, nil))
 
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
