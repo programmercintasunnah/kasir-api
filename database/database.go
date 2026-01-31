@@ -4,26 +4,29 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 )
 
 func InitDB(connectionString string) (*sql.DB, error) {
-	// Open database
-	db, err := sql.Open("postgres", connectionString)
+	cfg, err := pgx.ParseConfig(connectionString)
 	if err != nil {
 		return nil, err
 	}
+
+	// 🔑 WAJIB untuk Supabase pooler (6543)
+	cfg.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+
+	db := stdlib.OpenDB(*cfg)
 
 	// Test connection
-	err = db.Ping()
-	if err != nil {
+	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 
-	// Set connection pool settings (optional tapi recommended)
-	db.SetMaxOpenConns(25)
+	db.SetMaxOpenConns(10) // Supabase recommended kecil
 	db.SetMaxIdleConns(5)
 
-	log.Println("Database connected successfully")
+	log.Println("Database connected successfully (pgx)")
 	return db, nil
 }

@@ -65,6 +65,10 @@ func main() {
 	http.HandleFunc("/api/category", categoryHandler.HandleCategory)
 	http.HandleFunc("/api/category/", categoryHandler.HandleCategoryByID)
 
+	if config.Port == "" {
+		config.Port = "8080"
+	}
+
 	addr := "0.0.0.0:" + config.Port
 	fmt.Println("Server running di", addr)
 
