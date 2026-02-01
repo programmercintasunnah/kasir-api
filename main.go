@@ -16,7 +16,7 @@ import (
 
 // ubah Config
 type Config struct {
-	Port   string `mapstructure:"PORT"`
+	Port   string `mapstructure:"DB_PORT"`
 	DBConn string `mapstructure:"DB_CONN"`
 }
 
@@ -29,9 +29,9 @@ func main() {
 		_ = viper.ReadInConfig()
 	}
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("DB_PORT")
 	if port == "" {
-		log.Fatal("PORT is not set by Railway")
+		log.Fatal("DB_PORT is not set by Railway")
 	}
 
 	config := Config{
