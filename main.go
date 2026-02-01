@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"kasir-api/database"
 	"kasir-api/handlers"
 	"kasir-api/repositories"
@@ -72,10 +71,8 @@ func main() {
 	addr := "0.0.0.0:" + config.Port
 	log.Println("Server running on", addr)
 
-	log.Fatal(http.ListenAndServe(addr, nil))
-
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
-		fmt.Println("gagal running server", err)
+		log.Fatal("Failed to start server:", err)
 	}
 }
