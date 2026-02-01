@@ -35,7 +35,7 @@ func main() {
 	}
 
 	if config.Port == "" {
-		config.Port = "8080"
+		config.Port = "8088"
 	}
 
 	// Setup database
