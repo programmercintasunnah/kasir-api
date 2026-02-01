@@ -29,8 +29,13 @@ func main() {
 		_ = viper.ReadInConfig()
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("PORT is not set by Railway")
+	}
+
 	config := Config{
-		Port:   os.Getenv("PORT"),
+		Port:   port,
 		DBConn: viper.GetString("DB_CONN"),
 	}
 
