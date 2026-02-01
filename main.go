@@ -14,12 +14,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// ubah Config
-type Config struct {
-	Port   string `mapstructure:"DB_PORT"`
-	DBConn string `mapstructure:"DB_CONN"`
-}
-
 func main() {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -29,22 +23,20 @@ func main() {
 		_ = viper.ReadInConfig()
 	}
 
-	port := os.Getenv("DB_PORT")
+	// ✅ PORT KHUSUS HTTP SERVER (DARI RAILWAY)
+	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("DB_PORT is not set by Railway")
+		log.Fatal("PORT is not set (Railway Web Service required)")
 	}
 
-	config := Config{
-		Port:   port,
-		DBConn: viper.GetString("DB_CONN"),
-	}
-
-	if config.Port == "" {
-		config.Port = "8088"
+	// ✅ DB CONNECTION
+	dbConn := viper.GetString("DB_CONN")
+	if dbConn == "" {
+		log.Fatal("DB_CONN is not set")
 	}
 
 	// Setup database
-	db, err := database.InitDB(config.DBConn)
+	db, err := database.InitDB(dbConn)
 	if err != nil {
 		log.Fatal("Failed to initialize database:", err)
 	}
@@ -62,7 +54,6 @@ func main() {
 	productService := services.NewProductService(productRepo)
 	productHandler := handlers.NewProductHandler(productService)
 
-	// Setup routes
 	http.HandleFunc("/api/produk", productHandler.HandleProducts)
 	http.HandleFunc("/api/produk/", productHandler.HandleProductByID)
 
@@ -73,11 +64,8 @@ func main() {
 	http.HandleFunc("/api/category", categoryHandler.HandleCategory)
 	http.HandleFunc("/api/category/", categoryHandler.HandleCategoryByID)
 
-	addr := "0.0.0.0:" + config.Port
+	addr := ":" + port
 	log.Println("Server running on", addr)
 
-	err = http.ListenAndServe(addr, nil)
-	if err != nil {
-		log.Fatal("Failed to start server:", err)
-	}
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
