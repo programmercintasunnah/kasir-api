@@ -23,10 +23,10 @@ func main() {
 		_ = viper.ReadInConfig()
 	}
 
-	// ✅ PORT KHUSUS HTTP SERVER (DARI RAILWAY)
-	port := os.Getenv("PORT")
+	// ✅ DB_PORT KHUSUS HTTP SERVER (DARI RAILWAY)
+	port := os.Getenv("DB_PORT")
 	if port == "" {
-		log.Fatal("PORT is not set (Railway Web Service required)")
+		log.Fatal("DB_PORT is not set (Railway Web Service required)")
 	}
 
 	// ✅ DB CONNECTION
